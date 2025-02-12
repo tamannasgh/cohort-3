@@ -1,0 +1,35 @@
+# Node.js & React dependencies
+node_modules/
+**/node_modules
+dist/
+build/
+
+# Environment files
+.env
+.env.* # Covers all .env files like .env.production, .env.local
+
+# Logs & Debugging
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Config & Constants (adjust if needed)
+config.js
+config.ts
+config.json
+constants.js
+constants.ts
+constants.json
+
+# Cache & Temp files
+.cache/
+.tmp/

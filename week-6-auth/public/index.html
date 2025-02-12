@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>simple auth</title>
+	</head>
+	<body>
+		<div>
+			<p>Signup</p>
+			<input
+				type="text"
+				placeholder="username"
+				name="username"
+				id="username-su"
+			/>
+			<input
+				type="password"
+				placeholder="password"
+				name="password"
+				id="password-su"
+			/>
+			<input
+				type="submit"
+				value="Signup"
+				onclick="signup()"
+			/>
+		</div>
+		<div>
+			<p>Signin</p>
+			<input
+				type="text"
+				placeholder="username"
+				name="username"
+				id="username-si"
+			/>
+			<input
+				type="password"
+				placeholder="password"
+				name="password"
+				id="password-si"
+			/>
+			<input
+				type="submit"
+				value="Signin"
+				onclick="signin()"
+			/>
+		</div>
+
+		<div id="userInfo">
+			<h3>User Information</h3>
+			<h4 id="info"></h4>
+		</div>
+
+		<br />
+
+		<button
+			id="logout"
+			onclick="logout()"
+		>
+			Logout
+		</button>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<script src="index.js"></script>
+	</body>
+</html>
