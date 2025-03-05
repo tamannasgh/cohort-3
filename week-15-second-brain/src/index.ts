@@ -1,18 +1,12 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
-import jwt from "jsonwebtoken";
-import "dotenv/config";
+import express from "express";
 
 const app = express();
+const port = 3000;
 
 app.get("/", (req, res) => {
-  res.json({msg: "hey"});
+  res.send("hey");
 });
 
-
-const port = process.env.PORT || 3001;
-app.listen(port, ()=>{
-  console.log("app listening on port " + port);
-  
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
 });
