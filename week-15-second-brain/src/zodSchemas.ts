@@ -21,7 +21,6 @@ export const signupSchema = z.object({
 export const contentSchema = z.object({
 	type: z.enum(["document", "tweet", "youtube", "link"]),
 	link: z.string(),
-	title: z.string().min(20).max(100, "title should be atmost 100 characters"),
+	title: z.string().min(1).max(100, "title should be atmost 100 characters"),
 	tags: z.array(z.string()).optional(),
-	creatorId: z.string(),
 });

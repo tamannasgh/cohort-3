@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import "dotenv/config";
 
 export interface AuthRequest extends Request {
-	decodedToken?: string | JwtPayload;
+	id?: string;
 }
 
 export function authenticateUser(
@@ -18,8 +18,11 @@ export function authenticateUser(
 				.status(401)
 				.json({ message: "Unauthorized: No token provided" });
 		}
-		const decoded = jwt.verify(token, process.env.jwtSecret as string);
-		req.decodedToken = decoded;
+		const decoded = jwt.verify(
+			token,
+			process.env.jwtSecret as string
+		) as JwtPayload;
+		req.id = decoded.id as string;
 		next();
 	} catch (e) {
 		if (e instanceof Error) {

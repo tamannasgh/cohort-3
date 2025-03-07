@@ -3,8 +3,11 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
-import { validateSignupInputs } from "./middlewares/validate";
-import { User } from "./db";
+import {
+	validateContentInputs,
+	validateSignupInputs,
+} from "./middlewares/validate";
+import { Content, User } from "./db";
 import { authenticateUser, AuthRequest } from "./middlewares/authenticate";
 
 const app = express();
@@ -62,8 +65,76 @@ app.post("/signin", async (req, res) => {
 
 app.use(authenticateUser);
 
-app.post("/content", (req: AuthRequest, res) => {
-	console.log(req.decodedToken);
+app.post("/content", validateContentInputs, async (req, res) => {
+	try {
+		const userId = (req as AuthRequest).id;
+		const { type, link, title, tags } = req.body;
+		await Content.create({ type, link, title, tags, creatorId: userId });
+		res.status(201).json({ msg: "Content created successfully" });
+	} catch (e) {
+		if (e instanceof Error) {
+			res.status(403).json({ msg: e.message });
+		} else {
+			res.status(500).json({ msg: "An unknown error occurred" });
+		}
+	}
+});
+
+app.get("/content", async (req, res) => {
+	try {
+		const userId = (req as AuthRequest).id;
+		const contents = await Content.find({ creatorId: userId }).populate(
+			"creatorId",
+			"username"
+		);
+		res.status(200).json(contents);
+	} catch (e) {
+		if (e instanceof Error) {
+			res.status(403).json({ msg: e.message });
+		} else {
+			res.status(500).json({ msg: "An unknown error occurred" });
+		}
+	}
+});
+
+app.get("/content/:id", async (req, res) => {
+	try {
+		const userId = (req as AuthRequest).id;
+		const content = await Content.findOne({
+			_id: req.params.id,
+			creatorId: userId,
+		}).populate("creatorId", "username");
+		if (!content) {
+			throw new Error("Content not found or its not yours");
+		}
+		res.status(200).json(content);
+	} catch (e) {
+		if (e instanceof Error) {
+			res.status(403).json({ msg: e.message });
+		} else {
+			res.status(500).json({ msg: "An unknown error occurred" });
+		}
+	}
+});
+
+app.delete("/content/:id", async (req, res) => {
+	try {
+		const userId = (req as AuthRequest).id;
+		const content = await Content.findOneAndDelete({
+			_id: req.params.id,
+			creatorId: userId,
+		});
+		if (!content) {
+			throw new Error("Content not found");
+		}
+		res.status(200).json({ msg: "Content deleted successfully" });
+	} catch (e) {
+		if (e instanceof Error) {
+			res.status(403).json({ msg: e.message });
+		} else {
+			res.status(500).json({ msg: "An unknown error occurred" });
+		}
+	}
 });
 
 //db connection and starting server
