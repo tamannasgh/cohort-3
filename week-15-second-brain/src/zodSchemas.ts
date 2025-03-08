@@ -24,3 +24,5 @@ export const contentSchema = z.object({
 	title: z.string().min(1).max(100, "title should be atmost 100 characters"),
 	tags: z.array(z.string()).optional(),
 });
+
+export const updateContentSchema = contentSchema.partial();

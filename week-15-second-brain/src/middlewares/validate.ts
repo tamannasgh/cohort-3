@@ -1,5 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { contentSchema, signupSchema } from "../zodSchemas";
+import {
+	contentSchema,
+	signupSchema,
+	updateContentSchema,
+} from "../zodSchemas";
 import { ZodSchema } from "zod";
 
 function validatefunctionFactory(schema: ZodSchema) {
@@ -36,6 +40,12 @@ export const validateContentInputs: (
 	res: Response,
 	next: NextFunction
 ) => void = validatefunctionFactory(contentSchema);
+
+export const validateContentUpdateInputs: (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => void = validatefunctionFactory(updateContentSchema);
 
 // export function validateSignupInputs(
 // 	req: Request,
