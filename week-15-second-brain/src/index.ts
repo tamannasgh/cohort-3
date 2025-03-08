@@ -4,6 +4,7 @@ import "dotenv/config";
 import { authenticateUser } from "./middlewares/authenticate";
 import userRouter from "./routes/user";
 import contentRouter from "./routes/content";
+import tagRouter from "./routes/tag";
 
 const app = express();
 const port = process.env.port || 3000;
@@ -21,6 +22,12 @@ app.use(authenticateUser);
 
 app.use("/content", contentRouter);
 
+app.use("/tag", tagRouter);
+
+//no route handler middleware
+app.use((req, res) => {
+	res.status(404).json({ message: "Route not found" });
+});
 //db connection and starting server
 
 mongoose

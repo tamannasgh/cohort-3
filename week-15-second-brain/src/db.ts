@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model("user", userSchema);
 
 const tagSchema = new mongoose.Schema({
-	name: { type: "string", required: true },
+	name: { type: "string", required: true, unique: true },
 });
 
 const Tag = mongoose.model("tag", tagSchema);

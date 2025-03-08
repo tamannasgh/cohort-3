@@ -23,10 +23,9 @@ contentRouter.post("/", validateContentInputs, async (req, res) => {
 contentRouter.get("/", async (req, res) => {
 	try {
 		const userId = (req as AuthRequest).id;
-		const contents = await Content.find({ creatorId: userId }).populate(
-			"creatorId",
-			"username"
-		);
+		const contents = await Content.find({ creatorId: userId })
+			.populate("creatorId", "username")
+			.populate("tags");
 		res.status(200).json(contents);
 	} catch (e) {
 		if (e instanceof Error) {
@@ -43,7 +42,9 @@ contentRouter.get("/:id", async (req, res) => {
 		const content = await Content.findOne({
 			_id: req.params.id,
 			creatorId: userId,
-		}).populate("creatorId", "username");
+		})
+			.populate("creatorId", "username")
+			.populate("tags");
 		if (!content) {
 			throw new Error("Content not found or its not yours");
 		}
