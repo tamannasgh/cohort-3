@@ -5,6 +5,7 @@ import { authenticateUser } from "./middlewares/authenticate";
 import userRouter from "./routes/user";
 import contentRouter from "./routes/content";
 import tagRouter from "./routes/tag";
+import brainRouter from "./routes/share-brain";
 
 const app = express();
 const port = process.env.port || 3000;
@@ -23,6 +24,8 @@ app.use(authenticateUser);
 app.use("/content", contentRouter);
 
 app.use("/tag", tagRouter);
+
+app.use("/brain", brainRouter);
 
 //no route handler middleware
 app.use((req, res) => {

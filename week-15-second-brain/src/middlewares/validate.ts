@@ -46,28 +46,3 @@ export const validateContentUpdateInputs: (
 	res: Response,
 	next: NextFunction
 ) => void = validatefunctionFactory(updateContentSchema);
-
-// export function validateSignupInputs(
-// 	req: Request,
-// 	res: Response,
-// 	next: NextFunction
-// ) {
-// 	try {
-// 		const result = signupSchema.safeParse(req.body);
-// 		if (!result.success) {
-// 			result.error.errors.map((err) =>
-// 				console.log("err => ", err.message)
-// 			);
-// 			throw new Error("Invalid input");
-// 		} else {
-// 			req.body = result.data;
-// 			next();
-// 		}
-// 	} catch (e) {
-// 		if (e instanceof Error) {
-// 			res.status(411).json({ msg: e.message });
-// 		} else {
-// 			res.status(500).json({ msg: "An unknown error occurred" });
-// 		}
-// 	}
-// }

@@ -19,12 +19,24 @@ const contentSchema = new mongoose.Schema({
 		required: true,
 		enum: ["document", "tweet", "youtube", "link"],
 	},
-	link: { type: "string", required: true },
+	link: { type: "string", required: true, unique: true },
 	title: { type: "string", required: true },
-	tags: [{ type: mongoose.Types.ObjectId, ref: "tag" }],
+	tags: [
+		{
+			type: mongoose.Types.ObjectId,
+			ref: "tag",
+		},
+	],
 	creatorId: { type: mongoose.Types.ObjectId, required: true, ref: "user" },
 });
 
 const Content = mongoose.model("content", contentSchema);
 
-export { User, Tag, Content };
+const publicBrainLink = new mongoose.Schema({
+	hash: { type: "string", required: true, unique: true },
+	ownerId: { type: mongoose.Types.ObjectId, required: true, ref: "user" },
+});
+
+const Link = mongoose.model("link", publicBrainLink);
+
+export { User, Tag, Content, Link };
