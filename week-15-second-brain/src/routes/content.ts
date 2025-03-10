@@ -12,7 +12,7 @@ contentRouter.post("/", validateContentInputs, async (req, res) => {
 	try {
 		const userId = (req as AuthRequest).id;
 		const { type, link, title, tags } = req.body;
-		await Content.create({ type, link, title, tags, creatorId: userId });
+		await Content.create({ type, link, title, tags, userId });
 		res.status(201).json({ msg: "Content created successfully" });
 	} catch (e) {
 		if (e instanceof Error) {
@@ -26,8 +26,8 @@ contentRouter.post("/", validateContentInputs, async (req, res) => {
 contentRouter.get("/", async (req, res) => {
 	try {
 		const userId = (req as AuthRequest).id;
-		const contents = await Content.find({ creatorId: userId })
-			.populate("creatorId", "username")
+		const contents = await Content.find({ userId })
+			.populate("userId", "username")
 			.populate("tags");
 		res.status(200).json(contents);
 	} catch (e) {
@@ -44,9 +44,9 @@ contentRouter.get("/:id", async (req, res) => {
 		const userId = (req as AuthRequest).id;
 		const content = await Content.findOne({
 			_id: req.params.id,
-			creatorId: userId,
+			userId,
 		})
-			.populate("creatorId", "username")
+			.populate("userId", "username")
 			.populate("tags");
 		if (!content) {
 			throw new Error("Content not found or its not yours");
@@ -67,7 +67,7 @@ contentRouter.put("/:id", validateContentUpdateInputs, async (req, res) => {
 		const updates = req.body;
 		//this takes 3 args, first condition to find doc, then updates, then options, they all are objects and $set se basically hum jo jo dete h use update kr deta h db agr hum normally dege to poora doc hi replace hoke wo bn jaega
 		const content = await Content.findOneAndUpdate(
-			{ _id: req.params.id, creatorId: userId },
+			{ _id: req.params.id, userId },
 			{ $set: updates },
 			{ new: true }
 		);
@@ -89,7 +89,7 @@ contentRouter.delete("/:id", async (req, res) => {
 		const userId = (req as AuthRequest).id;
 		const content = await Content.findOneAndDelete({
 			_id: req.params.id,
-			creatorId: userId,
+			userId,
 		});
 		if (!content) {
 			throw new Error("Content not found or its not yours");

@@ -2,14 +2,15 @@ import express from "express";
 import { AuthRequest } from "../middlewares/authenticate";
 import { v4 as uuidv4 } from "uuid";
 import { Link, Content } from "../db";
-import { Document } from "mongoose";
+import mongoose from "mongoose";
 
 const brainRouter = express.Router();
 
-interface brainLink extends Document {
+interface brainLink extends mongoose.Document {
+	_id: mongoose.Types.ObjectId;
 	hash: string;
-	ownerId: {
-		_id: string;
+	userId: {
+		_id: mongoose.Types.ObjectId;
 		username: string;
 	};
 }
@@ -20,15 +21,17 @@ brainRouter.post("/share", async (req, res) => {
 		const share = req.body.share;
 
 		if (share) {
-			const link = await Link.findOne({ ownerId: userId });
+			const link = await Link.findOne({ userId });
 			if (link) {
-				throw new Error("You have already shared your brain");
+				throw new Error(
+					`You have already shared your brain, you can access at ${link.hash}`
+				);
 			}
 			const hash = uuidv4();
-			await Link.create({ hash, ownerId: userId });
+			await Link.create({ hash, userId });
 			res.status(200).json({ msg: "Shared brain", link: hash });
 		} else {
-			const link = await Link.findOneAndDelete({ ownerId: userId });
+			const link = await Link.findOneAndDelete({ userId });
 			if (!link) {
 				throw new Error("No brain to delete");
 			}
@@ -43,22 +46,27 @@ brainRouter.post("/share", async (req, res) => {
 	}
 });
 
+//for now we can only read the brain
 brainRouter.get("/:id", async (req, res) => {
 	try {
 		const hash = req.params.id;
 		const link = await Link.findOne({ hash }).populate(
-			"ownerId",
+			"userId",
 			"username"
 		);
+		//populate kr pare h hum kyunki ref set kiya tha user table ka
 		console.log(link);
 
 		if (!link) {
 			throw new Error("No brain found");
 		} else {
 			const contents = await Content.find({
-				creatorId: link.ownerId,
-			});
-			res.status(200).json({ contents });
+				userId: link.userId,
+			})
+				.populate("tags")
+				.populate("userId", "username");
+			const username = (link as unknown as brainLink).userId.username;
+			res.status(200).json({ username, contents });
 		}
 	} catch (err) {
 		if (err instanceof Error) {

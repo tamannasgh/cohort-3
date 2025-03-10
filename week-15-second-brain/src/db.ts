@@ -27,14 +27,14 @@ const contentSchema = new mongoose.Schema({
 			ref: "tag",
 		},
 	],
-	creatorId: { type: mongoose.Types.ObjectId, required: true, ref: "user" },
+	userId: { type: mongoose.Types.ObjectId, required: true, ref: "user" },
 });
 
 const Content = mongoose.model("content", contentSchema);
 
 const publicBrainLink = new mongoose.Schema({
 	hash: { type: "string", required: true, unique: true },
-	ownerId: { type: mongoose.Types.ObjectId, required: true, ref: "user" },
+	userId: { type: mongoose.Types.ObjectId, required: true, ref: "user" },
 });
 
 const Link = mongoose.model("link", publicBrainLink);
