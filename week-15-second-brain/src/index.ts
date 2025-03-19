@@ -6,9 +6,11 @@ import userRouter from "./routes/user";
 import contentRouter from "./routes/content";
 import tagRouter from "./routes/tag";
 import brainRouter from "./routes/share-brain";
+import searchRouter from "./routes/search";
+import { setupQDb } from "./services/qdrantService";
 
 const app = express();
-const port = process.env.port || 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,18 +29,27 @@ app.use("/tag", tagRouter);
 
 app.use("/brain", brainRouter);
 
+app.use("/search", searchRouter);
+
 //no route handler middleware
 app.use((req, res) => {
 	res.status(404).json({ message: "Route not found" });
 });
+
 //db connection and starting server
 
-mongoose
-	.connect(process.env.mongoUrl as string)
-	.then(() => {
+async function setupProject() {
+	try {
+		await setupQDb();
+		console.log("Qdrant Database connected");
+		await mongoose.connect(process.env.MONGO_URL as string);
+		console.log("Mongodb Database connected");
 		app.listen(port, () => {
-			console.log("Database connected");
 			console.log(`Server is running at http://localhost:${port}`);
 		});
-	})
-	.catch((e) => console.log(e));
+	} catch (e) {
+		console.log(e);
+	}
+}
+
+setupProject();

@@ -20,7 +20,7 @@ export function authenticateUser(
 		}
 		const decoded = jwt.verify(
 			token,
-			process.env.jwtSecret as string
+			process.env.JWT_SECRET as string
 		) as JwtPayload;
 		req.id = decoded.id as string;
 		next();

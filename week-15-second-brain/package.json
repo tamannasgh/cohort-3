@@ -12,6 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@huggingface/inference": "^3.5.2",
+    "@huggingface/transformers": "^3.4.0",
+    "@qdrant/js-client-rest": "^1.13.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "express": "^4.17.1",
