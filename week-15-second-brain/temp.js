@@ -1,11 +1,20 @@
-import {pipeline} from "@huggingface/transformers";
+import puppeteer from "puppeteer";
 
-const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-const output = await extractor('This is a simple test.', {pooling: 'mean', normalize: true});
-// Tensor {
-//   type: 'float32',
-//   data: Float32Array [0.09094982594251633, -0.014774246141314507, ...],
-//   dims: [1, 384]
-// }
+async function getTweetText(url) {
+  const browser = await puppeteer.launch({headless: "new"});
+  const page = await browser.newPage();
 
-console.log(output.data, output.size, output.dims);
+  try {
+    await page.goto(url, {
+      waitUntil: "networkidle2",
+    });
+    const tweetText = await page.$eval("article div[lang]", el => el.innerText);
+    console.log(tweetText);
+  } catch(e) {
+    console.log(e);
+  } finally {
+    await browser.close();
+  }
+}
+
+getTweetText("https://x.com/tamannastwt/status/1902735108878295496");

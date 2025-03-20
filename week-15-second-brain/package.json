@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "tsc && node dist/index.js",
     "dev": "nodemon --exec ts-node src/index.ts",
@@ -20,6 +21,7 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.1",
+    "puppeteer": "^24.4.0",
     "uuid": "^11.1.0",
     "zod": "^3.24.2"
   },
