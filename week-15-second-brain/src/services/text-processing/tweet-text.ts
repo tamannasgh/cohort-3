@@ -20,5 +20,3 @@ export default async function getTweetText(url: string) {
 		await browser.close();
 	}
 }
-
-getTweetText("https://x.com/tamannastwt/status/1902735108878295496");
