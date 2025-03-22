@@ -19,7 +19,7 @@ const contentSchema = new mongoose.Schema({
 		required: true,
 		enum: ["document", "tweet", "youtube", "link"],
 	},
-	link: { type: "string", required: true, unique: true },
+	link: { type: "string", required: true },
 	title: { type: "string", required: true },
 	tags: [
 		{
@@ -29,6 +29,8 @@ const contentSchema = new mongoose.Schema({
 	],
 	userId: { type: mongoose.Types.ObjectId, required: true, ref: "user" },
 });
+
+contentSchema.index({ userId: 1, link: 1 }, { unique: true });
 
 const Content = mongoose.model("content", contentSchema);
 

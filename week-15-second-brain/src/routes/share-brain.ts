@@ -61,7 +61,7 @@ brainRouter.get("/:id", async (req, res) => {
 			throw new Error("No brain found");
 		} else {
 			const contents = await Content.find({
-				userId: link.userId,
+				userId: (link as unknown as brainLink).userId._id,
 			})
 				.populate("tags")
 				.populate("userId", "username");

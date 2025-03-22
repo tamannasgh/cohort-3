@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import { Content } from "../db";
 import {
 	validateContentInputs,
@@ -11,7 +12,22 @@ const contentRouter = express.Router();
 contentRouter.post("/", validateContentInputs, async (req, res) => {
 	try {
 		const userId = (req as AuthRequest).id;
-		const { type, link, title, tags } = req.body;
+		let { type, link, title, tags } = req.body;
+		const contentAlreadyExists = await Content.findOne({ userId, link });
+		if (contentAlreadyExists) {
+			throw new Error("Content already exists with this link.");
+		}
+
+		//map mei directly String (function h ye) likhne ka mtlb hua ki ab hr tag string mei convert hoke milega
+		// Ensure `tags` is an array before processing
+		if (Array.isArray(tags)) {
+			tags = [...new Set(tags.map(String))].map(
+				(id) => new mongoose.Types.ObjectId(id)
+			);
+		} else {
+			tags = []; // If tags are not provided, set an empty array
+		}
+
 		await Content.create({ type, link, title, tags, userId });
 		res.status(201).json({ msg: "Content created successfully" });
 	} catch (e) {
@@ -65,7 +81,22 @@ contentRouter.put("/:id", validateContentUpdateInputs, async (req, res) => {
 	try {
 		const userId = (req as AuthRequest).id;
 		const updates = req.body;
-		//this takes 3 args, first condition to find doc, then updates, then options, they all are objects and $set se basically hum jo jo dete h use update kr deta h db agr hum normally dege to poora doc hi replace hoke wo bn jaega
+		if (updates.link) {
+			const contentAlreadyExists = await Content.findOne({
+				userId,
+				link: updates.link,
+			});
+			if (contentAlreadyExists) {
+				throw new Error("Content already exists with this link");
+			}
+		}
+		if (updates.tags && Array.isArray(updates.tags)) {
+			updates.tags = [...new Set(updates.tags.map(String))].map(
+				(id) => new mongoose.Types.ObjectId(id as string)
+			);
+		}
+
+		//this takes 3 args, first condition to find doc, then updates, then options, they all are objects and $set se basically hum jo jo dete h use update kr deta h db agr hum normally denge to poora doc hi replace hoke wo bn jaega or new true krne se return krega updated doc
 		const content = await Content.findOneAndUpdate(
 			{ _id: req.params.id, userId },
 			{ $set: updates },
