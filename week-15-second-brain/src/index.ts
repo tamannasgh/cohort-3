@@ -6,8 +6,9 @@ import userRouter from "./routes/user";
 import contentRouter from "./routes/content";
 import tagRouter from "./routes/tag";
 import brainRouter from "./routes/share-brain";
-import searchRouter from "./routes/search";
-import { setupQDb } from "./services/qdrantService";
+//will come to this soon...
+// import searchRouter from "./routes/search";
+// import { setupQDb } from "./services/qdrantService";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -29,7 +30,7 @@ app.use("/tag", tagRouter);
 
 app.use("/brain", brainRouter);
 
-app.use("/search", searchRouter);
+// app.use("/search", searchRouter);
 
 //no route handler middleware
 app.use((req, res) => {
@@ -40,8 +41,9 @@ app.use((req, res) => {
 
 async function setupProject() {
 	try {
-		await setupQDb();
-		console.log("Qdrant Database connected");
+		//will come to this soon....
+		// await setupQDb();
+		// console.log("Qdrant Database connected");
 		await mongoose.connect(process.env.MONGO_URL as string);
 		console.log("Mongodb Database connected");
 		app.listen(port, () => {
