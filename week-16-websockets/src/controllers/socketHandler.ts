@@ -1,13 +1,16 @@
+// this file have the socket events handler functions and inside handle message function, i am checking the type of client msg, join identify and message, and based on that i am calling handler function
+
 import { ClientMessageTypes, ServerMessages } from "../constants/messages";
 import { ClientMessage } from "../types/messages";
-import { sendServerRes } from "../utility/send";
-import { users } from "../managers/userManager";
-import { rooms } from "../managers/rooms";
+import { sendServerRes } from "../utils/send";
+import { users } from "../models/userManager";
+import { rooms } from "../models/rooms";
 import WebSocket from "ws";
 import {
 	handleIdentify,
 	handleJoin,
-	handleClientMessage,
+	handleGrpMessage,
+	handlePrvMessage,
 } from "./clientMessagesHandler";
 
 export function handleMessage(msg: string, socket: WebSocket) {
@@ -32,8 +35,11 @@ export function handleMessage(msg: string, socket: WebSocket) {
 			case ClientMessageTypes.Join:
 				handleJoin(clientMsg, socket);
 				break;
-			case ClientMessageTypes.Message:
-				handleClientMessage(clientMsg, socket);
+			case ClientMessageTypes.GrpMessage:
+				handleGrpMessage(clientMsg, socket);
+				break;
+			case ClientMessageTypes.PrvMessage:
+				handlePrvMessage(clientMsg, socket);
 		}
 	} catch (err) {
 		console.log("error occured: ", err);

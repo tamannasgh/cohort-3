@@ -23,6 +23,10 @@ function getAllUsers() {
 	// return Object.fromEntries(users.entries());
 }
 
+function getUser(userName: string) {
+	return usersMap.get(userName);
+}
+
 function userExists(userId: string) {
 	return usersMap.has(userId);
 }
@@ -37,4 +41,5 @@ export const users = {
 	getAllUsers,
 	userExists,
 	usersCount,
+	getUser,
 };

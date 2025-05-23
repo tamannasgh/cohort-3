@@ -3,10 +3,12 @@ export enum ServerMessages {
 	Joined = "joined",
 	NewMessage = "newMessage",
 	Failed = "failed",
+	Success = "success",
 }
 
 export enum ClientMessageTypes {
 	Identify = "identify",
 	Join = "join",
-	Message = "message",
+	GrpMessage = "grp-message",
+	PrvMessage = "prv-message",
 }

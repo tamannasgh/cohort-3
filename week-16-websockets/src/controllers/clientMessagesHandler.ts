@@ -1,9 +1,11 @@
+// here i have the client message handlers, when user msg type is join, identify and message.
+
 import { ClientMessageTypes, ServerMessages } from "../constants/messages";
 import { ClientMessage } from "../types/messages";
-import { sendServerRes } from "../utility/send";
+import { sendServerRes } from "../utils/send";
 import { ROOMS } from "../constants/rooms";
-import { users } from "../managers/userManager";
-import { rooms } from "../managers/rooms";
+import { users } from "../models/userManager";
+import { rooms } from "../models/rooms";
 import WebSocket from "ws";
 
 export function handleIdentify(clientMsg: ClientMessage, socket: WebSocket) {
@@ -45,11 +47,8 @@ export function handleJoin(clientMsg: ClientMessage, socket: WebSocket) {
 	}
 }
 
-export function handleClientMessage(
-	clientMsg: ClientMessage,
-	socket: WebSocket
-) {
-	if (clientMsg.type !== ClientMessageTypes.Message) {
+export function handleGrpMessage(clientMsg: ClientMessage, socket: WebSocket) {
+	if (clientMsg.type !== ClientMessageTypes.GrpMessage) {
 		return; //for same reason
 	}
 
@@ -58,6 +57,8 @@ export function handleClientMessage(
 			sendServerRes(socket, ServerMessages.Failed, {
 				message: "there is no room with that name",
 			});
+		} else if (!clientMsg.data.message) {
+			throw new Error("message is required.");
 		} else {
 			rooms.getRoom(clientMsg.data.room).forEach((client) => {
 				sendServerRes(client, ServerMessages.NewMessage, {
@@ -67,6 +68,34 @@ export function handleClientMessage(
 				});
 			});
 		}
+	} catch (err) {
+		sendServerRes(socket, ServerMessages.Failed, {
+			message: `error occured: ${err}`,
+		});
+		console.log("error:", err);
+	}
+}
+
+export function handlePrvMessage(clientMsg: ClientMessage, socket: WebSocket) {
+	if (clientMsg.type !== ClientMessageTypes.PrvMessage) {
+		return;
+	}
+	try {
+		const sendMsgTo = users.getUser(clientMsg.data.to);
+		if (!sendMsgTo) {
+			throw new Error(`there is no user: ${clientMsg.data.to}`);
+		}
+		if (!clientMsg.data.message) {
+			throw new Error("message is required.");
+		}
+		sendServerRes(sendMsgTo, ServerMessages.NewMessage, {
+			message: clientMsg.data.message,
+			from: clientMsg.data.userId,
+		});
+		sendServerRes(socket, ServerMessages.Success, {
+			message: "message sent.",
+			to: clientMsg.data.to,
+		});
 	} catch (err) {
 		sendServerRes(socket, ServerMessages.Failed, {
 			message: `error occured: ${err}`,
