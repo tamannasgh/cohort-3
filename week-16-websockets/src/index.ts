@@ -1,27 +1,17 @@
-//this is main entry point, here i am calling functions to handle socket events -> message(any), close and error
+//entry pointtt
 
-import { WebSocketServer } from "ws";
-import {
-	handleClose,
-	handleError,
-	handleMessage,
-} from "./controllers/socketHandler";
+import { server } from "./server";
+import dbSetup from "./db";
+import "dotenv/config";
 
-const wss = new WebSocketServer({ port: 8080 });
-console.log("WebSocket server started on ws://localhost:8080");
+const port = process.env.PORT || 3000;
 
-wss.on("connection", (socket) => {
-	console.log("user connected");
-
-	socket.on("message", function (msg) {
-		handleMessage(msg.toString(), socket);
+dbSetup()
+	.then(() => {
+		server.listen(port, () =>
+			console.log(`server is running on port ${port}`)
+		);
+	})
+	.catch((err) => {
+		console.log("error occured: ", err);
 	});
-
-	socket.on("close", function () {
-		handleClose(socket);
-	});
-
-	socket.on("error", function (err) {
-		handleError(err);
-	});
-});
