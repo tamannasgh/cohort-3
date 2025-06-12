@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { SigninSchema, SignupSchema } from "../validators/auth.schema";
 import signupUser from "../core/auth/signup";
-import User from "../models/user.model";
-import bcrypt from "bcrypt";
+import checkCredentials from "../core/auth/checkCredentials";
 import { getJwtToken } from "../core/auth/jwt";
 
 async function signupController(req: Request, res: Response) {
@@ -23,14 +22,7 @@ async function signupController(req: Request, res: Response) {
 async function signinController(req: Request, res: Response) {
 	try {
 		const data = SigninSchema.parse(req.body);
-		let user = await User.findOne({ username: data.username });
-		if (!user) throw new Error(`${data.username} doesn't exists.`);
-		const isPasswordCorrect = await bcrypt.compare(
-			data.password,
-			user.password!
-		);
-		if (!isPasswordCorrect) throw new Error("password is incorrect.");
-
+		await checkCredentials(data);
 		const token = getJwtToken({ username: data.username });
 
 		res.status(200).send({

@@ -1,6 +1,6 @@
 import express from "express";
 import authRouter from "./routes/auth.routes";
-import { verifyJwtToken } from "./core/auth/jwt";
+import authMiddleware from "./middlewares/auth.middleware";
 
 const app = express();
 
@@ -15,20 +15,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authRouter);
 
-app.use((req, res, next) => {
-	try {
-		const token = req.headers.authorization;
-		const data = verifyJwtToken(token!);
-		console.log(data);
-		next();
-	} catch (err: any) {
-		console.log("error: ", err);
-		res.status(400).send({
-			msg: "error occured",
-			error: err.message || "something went wrong",
-		});
-	}
-});
+app.use(authMiddleware);
 
 app.get("/me", (req, res) => {
 	console.log("hey");
